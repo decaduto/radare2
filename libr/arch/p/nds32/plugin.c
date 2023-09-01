@@ -207,20 +207,24 @@ static bool decode(RArchSession *as, RAnalOp *op, RAnalOpMask mask) {
 		op->type = R_ANAL_OP_TYPE_OR;
 	} else if (is_any ("ret ", "iret")) {
 		op->type = R_ANAL_OP_TYPE_RET;
+		esilprintf (op, "ra,pc,:=");
 	} else if (is_any ("addi", "addri")) {
 		op->type = R_ANAL_OP_TYPE_ADD;
 	} else if (is_any ("subi", "subri", "sub")) {
 		op->type = R_ANAL_OP_TYPE_SUB;
 	} else if (is_any ("xori")) {
 		op->type = R_ANAL_OP_TYPE_XOR;
+		esilprintf (op, "%s,%s,^,%s,=", ARG (2), ARG (1), ARG (0));
 	} else if (is_any ("andi")) {
 		op->type = R_ANAL_OP_TYPE_AND;
+		esilprintf (op, "%s,%s,&,%s,=", ARG (2), ARG (1), ARG (0));
 	} else if (is_any ("sh", "sl")) {
 		op->type = R_ANAL_OP_TYPE_SHL;
 	} else if (is_any ("lb", "lw", "ld", "lh")) {
 		op->type = R_ANAL_OP_TYPE_LOAD;
 	} else if (is_any ("mov")) {
 		op->type = R_ANAL_OP_TYPE_MOV;
+		esilprintf (op, "%s,%s,=", ARG (1), ARG (0));
 	} else if (is_any ("st", "sb", "sd", "sh")) {
 		op->type = R_ANAL_OP_TYPE_STORE;
 	} else if (is_any ("ifcall")) {
@@ -237,6 +241,43 @@ static bool decode(RArchSession *as, RAnalOp *op, RAnalOpMask mask) {
 		op->jump = arg? r_num_get (NULL, arg): op->addr;
 		op->fail = addr + op->size;
 	}
+		if (is_any ("beqz ")) {
+			esilprintf (op, "%s,%s,==,$z,?{,%s,pc,:=,},", ARG (1), ARG (0), ARG (2));
+		} else if (is_any ("bnes ")) {
+			esilprintf (op, "%s,%s,==,$z,!,?{,%s,pc,:=,},", ARG (1), ARG (0), ARG (2));
+		} else if (is_any ("ble ", "bleu")) {
+			esilprintf (op, "%s,%s,<=,?{,%s,pc,:=,},", ARG (1), ARG (0), ARG (2));
+		} else if (is_any ("bltz ", "bltu")) {
+			esilprintf (op, "%s,%s,<,?{,%s,pc,:=,},", ARG (1), ARG (0), ARG (2));
+		} else if (is_any ("bge ", "bgeu")) {
+			esilprintf (op, "%s,%s,>=,?{,%s,pc,:=,},", ARG (1), ARG (0), ARG (2));
+		} else if (is_any ("bgtz ", "bgtu")) {
+			esilprintf (op, "%s,%s,>,?{,%s,pc,:=,},", ARG (1), ARG (0), ARG (2));
+		} else if (is_any ("beqz ")) {
+			esilprintf (op, "%s,0,==,$z,?{,%s,pc,:=,},", ARG (0), ARG (1));
+		} else if (is_any ("bnez ")) {
+			esilprintf (op, "%s,0,==,$z,!,?{,%s,pc,:=,},", ARG (0), ARG (1));
+		} else if (is_any ("bjez ")) {
+			esilprintf (op, "%s,0,<=,?{,%s,pc,:=,},", ARG (0), ARG (1));
+		} else if (is_any ("bjtz ")) {
+			esilprintf (op, "%s,0,<,?{,%s,pc,:=,},", ARG (0), ARG (1));
+		} else if (is_any ("bjez ")) {
+			esilprintf (op, "%s,0,>=,?{,%s,pc,:=,},", ARG (0), ARG (1));
+		} else if (is_any ("bgtz ")) {
+			esilprintf (op, "%s,0,>,?{,%s,pc,:=,},", ARG (0), ARG (1));
+		} else if (is_any ("seq ")) {
+			esilprintf (op, "%s,%s,==,%s,=", ARG (2), ARG (1), ARG (0));
+		} else if (is_any ("sne ")) {
+			esilprintf (op, "%s,%s,!=,%s,=", ARG (2), ARG (1), ARG (0));
+		} else if (is_any ("sle ")) {
+			esilprintf (op, "%s,%s,<=,%s,=", ARG (2), ARG (1), ARG (0));
+		} else if (is_any ("slt ")) {
+			esilprintf (op, "%s,%s,<,%s,=", ARG (2), ARG (1), ARG (0));
+		} else if (is_any ("sge ")) {
+			esilprintf (op, "%s,%s,>=,%s,=", ARG (2), ARG (1), ARG (0));
+		} else if (is_any ("sgt ")) {
+			esilprintf (op, "%s,%s,>,%s,=", ARG (2), ARG (1), ARG (0));
+		}
 	r_strbuf_free (sb);
 	return op->size > 0;
 }
