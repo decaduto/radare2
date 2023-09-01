@@ -205,7 +205,7 @@ static bool decode(RArchSession *as, RAnalOp *op, RAnalOpMask mask) {
 		op->type = R_ANAL_OP_TYPE_SWI;
 	} else if (is_any ("ori")) {
 		op->type = R_ANAL_OP_TYPE_OR;
-	} else if (is_any ("ret ", "iret")) {
+	} else if (is_any ("ret ", "iret", "iret ", "ret5 ", "ret5", "ifret16 ", "ifret16",  "ifret ", "ifret")) {
 		op->type = R_ANAL_OP_TYPE_RET;
 	} else if (is_any ("addi", "addri")) {
 		op->type = R_ANAL_OP_TYPE_ADD;
