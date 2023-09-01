@@ -244,7 +244,7 @@ static bool decode(RArchSession *as, RAnalOp *op, RAnalOpMask mask) {
 const RArchPlugin r_arch_plugin_nds32 = {
 	.meta = {
 		.name = "nds32",
-		.author = "Edoardo Mantovani",
+		.author = "Edoardo Mantovani and Pancake",
 		.license = "GPL3",
 		.desc = "Binutils based nds32 disassembler",
 	},
